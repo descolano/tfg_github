@@ -1,0 +1,405 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costes Totales - PrediDM2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            font-weight: 300;
+            color: #bdc3c7;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 12px 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.6);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content-wrapper {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e74c3c;
+            display: inline-block;
+        }
+
+        .chart-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            border-radius: 12px;
+            border: 1px solid #f44336;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 16px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .concepto-cell {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
+            max-width: 400px;
+            word-wrap: break-word;
+        }
+
+        .numero {
+            text-align: right;
+            font-weight: 500;
+            color: #374151;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .coste {
+            text-align: right;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .coste-high {
+            color: #dc2626;
+        }
+
+        .coste-medium {
+            color: #d97706;
+        }
+
+        .coste-low {
+            color: #059669;
+        }
+
+        .porcentaje {
+            text-align: right;
+            font-weight: 500;
+            color: #6b7280;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            padding: 40px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .footer {
+            text-align: center;
+            color: #bdc3c7;
+            margin-top: 40px;
+            padding: 20px 0;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content-wrapper {
+                padding: 25px 20px;
+            }
+            
+            .stats-summary {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .concepto-cell {
+                max-width: 200px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+            
+            .content-wrapper {
+                padding: 20px 15px;
+            }
+            
+            .concepto-cell {
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PrediDM2</h1>
+            <p class="subtitle">Análisis de Prevalencia Geográfica de Diabetes Mellitus Tipo 2</p>
+        </div>
+
+        <a href="/" class="back-link">← Inicio</a>
+
+        {% if error %}
+            <div class="error">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% elif datos %}
+            <div class="content-wrapper">
+                <h2 class="section-title">{{ titulo }}</h2>
+                
+                <!-- Gráfico interactivo -->
+                {% if grafico %}
+                <div class="chart-section">
+                    <h3 class="chart-title">Distribución de Costes por Concepto</h3>
+                    <div class="chart-container">
+                        {{ grafico|safe }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Resumen estadístico -->
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ num_conceptos }}</div>
+                        <div class="stat-label">Conceptos Analizados</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ total_coste|floatformat:0|intcomma }}€</div>
+                        <div class="stat-label">Coste Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ promedio_coste|floatformat:0|intcomma }}€</div>
+                        <div class="stat-label">Coste Promedio</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">DM2</div>
+                        <div class="stat-label">Área de Estudio</div>
+                    </div>
+                </div>
+
+                <!-- Tabla de costes -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Coste (€)</th>
+                                <th>Porcentaje (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in datos %}
+                            <tr>
+                                <td class="concepto-cell">
+                                    {{ registro.concepto|default:"-" }}
+                                </td>
+                                <td class="coste 
+                                    {% if registro.coste %}
+                                        {% if registro.coste|floatformat:0|add:0 > 50000000 %}coste-high
+                                        {% elif registro.coste|floatformat:0|add:0 > 10000000 %}coste-medium
+                                        {% else %}coste-low{% endif %}
+                                    {% endif %}">
+                                    {% if registro.coste %}{{ registro.coste|floatformat:0|intcomma }}€{% else %}-{% endif %}
+                                </td>
+                                <td class="porcentaje">
+                                    {% if registro.porcentaje %}{{ registro.porcentaje|floatformat:1 }}%{% else %}-{% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="content-wrapper">
+                <div class="no-data">
+                    <p>No se encontraron datos de costes disponibles para el análisis.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="footer">
+            <p>Instituto de Investigación Sanitaria INCLIVA • PrediDM2 • Sistema de Análisis de Diabetes Mellitus Tipo 2</p>
+        </div>
+    </div>
+</body>
+</html>

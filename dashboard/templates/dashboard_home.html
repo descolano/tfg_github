@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrediDM2 - Sistema de Análisis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            color: #ecf0f1;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            font-weight: 300;
+            color: #bdc3c7;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 35px 25px;
+            text-decoration: none;
+            color: #2c3e50;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 4px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-1 { border-top-color: #3498db; }
+        .card-2 { border-top-color: #27ae60; }
+        .card-3 { border-top-color: #e67e22; }
+        .card-4 { border-top-color: #e74c3c; }
+        .card-5 { border-top-color: #8e44ad; }
+        .card-6 { border-top-color: #1abc9c; }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            position: relative;
+        }
+
+        .card-1 .card-icon { background: linear-gradient(135deg, #3498db, #5dade2); }
+        .card-2 .card-icon { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .card-3 .card-icon { background: linear-gradient(135deg, #e67e22, #f39c12); }
+        .card-4 .card-icon { background: linear-gradient(135deg, #e74c3c, #ec7063); }
+        .card-5 .card-icon { background: linear-gradient(135deg, #8e44ad, #a569bd); }
+        .card-6 .card-icon { background: linear-gradient(135deg, #1abc9c, #48c9b0); }
+
+        .predictor-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 2px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        .predictor-badge svg {
+            width: 12px;
+            height: 12px;
+            fill: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            line-height: 1.3;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Footer con logos */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #bdc3c7;
+            margin-top: 50px;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer p {
+            flex: 1;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        .footer img {
+            height: 100px;
+            width: auto;
+        }
+
+        .footer img:first-child {
+            margin-top: 40px;   
+            margin-left: 0;   
+        }
+
+        .footer img:last-child {
+            margin-top: 40px; 
+            margin-right: 0;   
+        }
+
+
+        @media (max-width: 768px) {
+            .footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .footer p {
+                order: -1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <h1>PrediDM2</h1>
+            <p class="subtitle">Sistema de Análisis Epidemiológico y Predictivo</p>
+        </div>
+
+        <div class="cards-grid">
+            <a href="/edad-sexo/" class="card card-1">
+                <div class="card-icon">ES</div>
+                <div class="card-title">Prevalencia por Edad y Sexo</div>
+                <div class="card-description">
+                    Análisis de la distribución de pacientes por grupos de edad y sexo.
+                </div>
+            </a>
+
+            <a href="/comorbilidades/" class="card card-2">
+                <div class="card-icon">PC</div>
+                <div class="card-title">Patologías Concomitantes</div>
+                <div class="card-description">
+                    Comorbilidades y complicaciones asociadas con diabetes mellitus tipo 2.
+                </div>
+            </a>
+
+            <a href="/prevalencia-zona/" class="card card-3">
+                <div class="card-icon">Z</div>
+                <div class="card-title">Prevalencia por Zona</div>
+                <div class="card-description">
+                    Distribución geográfica de la prevalencia de DM2 por áreas de salud.
+                </div>
+            </a>
+
+            <a href="/costes-totales/" class="card card-4">
+                <div class="card-icon">CT</div>
+                <div class="card-title">Costes Totales</div>
+                <div class="card-description">
+                    Análisis económico y distribución de costes asociados al tratamiento de DM2.
+                </div>
+            </a>
+
+            <a href="/prediccion-gasto/" class="card card-5">
+                <div class="card-icon">
+                    PF
+                    <div class="predictor-badge">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.19 0 2.34-.21 3.41-.6.39-.14.59-.55.45-.94-.14-.39-.55-.59-.94-.45-.86.31-1.77.47-2.7.47-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8c0 .93-.16 1.84-.47 2.7-.14.39.06.8.45.94.39.14.8-.06.94-.45.39-1.07.6-2.22.6-3.41 0-5.52-4.48-10-10-10z"/>
+                            <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c.71 0 1.39-.12 2.03-.35.38-.14.57-.56.43-.94-.14-.38-.56-.57-.94-.43-.43.15-.88.24-1.35.24-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4c0 .47-.09.92-.24 1.35-.14.38.05.8.43.94.38.14.8-.05.94-.43.23-.64.35-1.32.35-2.03 0-3.31-2.69-6-6-6z"/>
+                            <path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-title">Predicción Gasto Farmacéutico</div>
+                <div class="card-description">
+                    Modelo predictivo de gasto farmacéutico basado en características del paciente.
+                </div>
+            </a>
+
+            <a href="/prediccion-coste-total/" class="card card-6">
+                <div class="card-icon">
+                    PCT
+                    <div class="predictor-badge">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.19 0 2.34-.21 3.41-.6.39-.14.59-.55.45-.94-.14-.39-.55-.59-.94-.45-.86.31-1.77.47-2.7.47-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8c0 .93-.16 1.84-.47 2.7-.14.39.06.8.45.94.39.14.8-.06.94-.45.39-1.07.6-2.22.6-3.41 0-5.52-4.48-10-10-10z"/>
+                            <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c.71 0 1.39-.12 2.03-.35.38-.14.57-.56.43-.94-.14-.38-.56-.57-.94-.43-.43.15-.88.24-1.35.24-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4c0 .47-.09.92-.24 1.35-.14.38.05.8.43.94.38.14.8-.05.94-.43.23-.64.35-1.32.35-2.03 0-3.31-2.69-6-6-6z"/>
+                            <path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-title">Predicción Coste Total</div>
+                <div class="card-description">
+                    Modelo predictivo de coste sanitario total por paciente con DM2.
+                </div>
+            </a>
+        </div>
+
+        <div class="footer">
+            <img src="{% static 'logo_conselleria.gif' %}" alt="Consellería de Sanidad" title="Consellería de Sanidad Universal y Salud Pública">
+            <p>Instituto de Investigación Sanitaria INCLIVA • Sistema de Análisis de Diabetes Mellitus Tipo 2</p>
+            <img src="{% static 'UPVlogo.png' %}" alt="Universidad Politécnica de Valencia" title="Universitat Politècnica de València">
+        </div>
+    </div>
+</body>
+</html>

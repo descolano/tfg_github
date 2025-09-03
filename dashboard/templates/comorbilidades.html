@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }} - PrediDM2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            font-weight: 300;
+            color: #bdc3c7;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 12px 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.6);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content-wrapper {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #22C55E;
+            display: inline-block;
+        }
+
+        .section-title.complicaciones {
+            border-bottom: 3px solid #EAB308;
+        }
+
+        .grafico-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 16px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th.complicaciones {
+            background: linear-gradient(135deg, #EAB308, #CA8A04);
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comorbilidad {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+
+        .numero {
+            text-align: right;
+            font-weight: 500;
+            color: #374151;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .prevalencia {
+            text-align: right;
+            font-weight: 600;
+            color: #059669;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .prevalencia-high {
+            color: #dc2626;
+        }
+
+        .prevalencia-medium {
+            color: #d97706;
+        }
+
+        .prevalencia-low {
+            color: #059669;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            padding: 40px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .footer {
+            text-align: center;
+            color: #bdc3c7;
+            margin-top: 40px;
+            padding: 20px 0;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        .section-divider {
+            height: 30px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content-wrapper {
+                padding: 25px 20px;
+            }
+            
+            .stats-summary {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+            
+            .content-wrapper {
+                padding: 20px 15px;
+            }
+            
+            .grafico-container {
+                margin: 20px 0;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PrediDM2</h1>
+            <p class="subtitle">Análisis de Comorbilidades y Complicaciones en Diabetes Mellitus Tipo 2</p>
+        </div>
+
+        <a href="/" class="back-link">← Inicio</a>
+
+        {% if error %}
+            <div class="error">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% else %}
+            <!-- SECCIÓN DE COMORBILIDADES -->
+            {% if datos_comorbilidades %}
+            <div class="content-wrapper">
+                <h2 class="section-title">Comorbilidades DM2</h2>
+                
+                <!-- Gráfico de comorbilidades -->
+                {% if grafico_comorbilidades %}
+                <div class="grafico-container">
+                    {{ grafico_comorbilidades|safe }}
+                </div>
+                {% endif %}
+                
+                <!-- Resumen estadístico comorbilidades -->
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ datos_comorbilidades|length }}</div>
+                        <div class="stat-label">Total Comorbilidades</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            {% if datos_comorbilidades %}
+                                {{ datos_comorbilidades.0.prevalencia|floatformat:1|default:"-" }}%
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Prevalencia Máxima</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">DM2</div>
+                        <div class="stat-label">Enfermedad Base</div>
+                    </div>
+                </div>
+
+                <!-- Tabla de comorbilidades -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Comorbilidad</th>
+                                <th>Pacientes</th>
+                                <th>Prevalencia (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in datos_comorbilidades %}
+                            <tr>
+                                <td class="comorbilidad">{{ registro.comorbilidad }}</td>
+                                <td class="numero">{{ registro.pacientes|default:"-" }}</td>
+                                <td class="prevalencia 
+                                    {% if registro.prevalencia > 20 %}prevalencia-high
+                                    {% elif registro.prevalencia > 10 %}prevalencia-medium
+                                    {% else %}prevalencia-low{% endif %}">
+                                    {{ registro.prevalencia|floatformat:2|default:"-" }}%
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="content-wrapper">
+                <h2 class="section-title">Comorbilidades DM2</h2>
+                <div class="no-data">
+                    <p>No se encontraron datos de comorbilidades disponibles para el análisis.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="section-divider"></div>
+
+            <!-- SECCIÓN DE COMPLICACIONES -->
+            {% if datos_complicaciones %}
+            <div class="content-wrapper">
+                <h2 class="section-title complicaciones">Complicaciones DM2</h2>
+                
+                <!-- Gráfico de complicaciones -->
+                {% if grafico_complicaciones %}
+                <div class="grafico-container">
+                    {{ grafico_complicaciones|safe }}
+                </div>
+                {% endif %}
+                
+                <!-- Resumen estadístico complicaciones -->
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ datos_complicaciones|length }}</div>
+                        <div class="stat-label">Total Complicaciones</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            {% if datos_complicaciones %}
+                                {{ datos_complicaciones.0.prevalencia|floatformat:1|default:"-" }}%
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Prevalencia Máxima</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">Diabética</div>
+                        <div class="stat-label">Complicación Tipo</div>
+                    </div>
+                </div>
+
+                <!-- Tabla de complicaciones -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="complicaciones">Complicación</th>
+                                <th class="complicaciones">Pacientes</th>
+                                <th class="complicaciones">Prevalencia (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in datos_complicaciones %}
+                            <tr>
+                                <td class="comorbilidad">{{ registro.complicacion }}</td>
+                                <td class="numero">{{ registro.pacientes|default:"-" }}</td>
+                                <td class="prevalencia 
+                                    {% if registro.prevalencia > 20 %}prevalencia-high
+                                    {% elif registro.prevalencia > 10 %}prevalencia-medium
+                                    {% else %}prevalencia-low{% endif %}">
+                                    {{ registro.prevalencia|floatformat:2|default:"-" }}%
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="content-wrapper">
+                <h2 class="section-title complicaciones">Complicaciones DM2</h2>
+                <div class="no-data">
+                    <p>No se encontraron datos de complicaciones disponibles para el análisis.</p>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <div class="footer">
+            <p>Instituto de Investigación Sanitaria INCLIVA • PrediDM2 • Sistema de Análisis de Diabetes Mellitus Tipo 2</p>
+        </div>
+    </div>
+</body>
+</html>

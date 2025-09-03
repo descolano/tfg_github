@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }} - PrediDM2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            font-weight: 300;
+            color: #bdc3c7;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 12px 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.6);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tabs-container {
+            background: white;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 0;
+        }
+
+        .tabs-nav {
+            display: flex;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px 15px 0 0;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tab-button {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 20px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+        }
+
+        .tab-button:first-child {
+            border-radius: 15px 0 0 0;
+        }
+
+        .tab-button:last-child {
+            border-radius: 0 15px 0 0;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #e74c3c;
+            transform: translateY(-2px);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e74c3c;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: rgba(255,255,255,0.7);
+            color: #4a5568;
+            transform: translateY(-1px);
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 0 0 15px 15px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ESTILOS PARA EL PREDICTOR */
+        .predictor-form {
+            margin-top: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e74c3c;
+            display: inline-block;
+        }
+
+        .form-section-title.comorbilidades {
+            border-bottom: 2px solid #27ae60;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #f1f5f9;
+            transform: translateX(2px);
+        }
+
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
+            accent-color: #e74c3c;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 0.95rem;
+            color: #2c3e50;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .predict-button {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .predict-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .predict-button:active {
+            transform: translateY(0);
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            display: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .result-box.success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 1px solid #27ae60;
+            color: #155724;
+        }
+
+        .result-box.error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border: 1px solid #e74c3c;
+            color: #721c24;
+        }
+
+        .content-wrapper {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e74c3c;
+            display: inline-block;
+        }
+
+        .section-title.modelo {
+            border-bottom: 3px solid #3498db;
+        }
+
+        .section-title.features {
+            border-bottom: 3px solid #e67e22;
+        }
+
+        .section-title.costes {
+            border-bottom: 3px solid #9b59b6;
+        }
+
+        .section-title.clinico {
+            border-bottom: 3px solid #27ae60;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-value.euro {
+            color: #e74c3c;
+        }
+
+        .stat-value.modelo {
+            color: #8e44ad;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .models-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .model-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .model-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .model-card.lineal {
+            border-left: 5px solid #3498db;
+        }
+
+        .model-card.forest {
+            border-left: 5px solid #27ae60;
+        }
+
+        .model-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .model-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .metric-value.r2 {
+            color: #27ae60;
+        }
+
+        .metric-value.mse {
+            color: #e74c3c;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #e67e22;
+            transition: all 0.2s ease;
+        }
+
+        .feature-item:hover {
+            background: #e9ecef;
+            transform: translateX(3px);
+        }
+
+        .feature-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .feature-importance {
+            font-weight: 600;
+            color: #e67e22;
+            font-size: 0.9rem;
+        }
+
+        .costes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .coste-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid #9b59b6;
+            transition: all 0.2s ease;
+        }
+
+        .coste-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .coste-concepto {
+            font-size: 0.9rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .coste-valor {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #9b59b6;
+            margin-bottom: 5px;
+        }
+
+        .coste-porcentaje {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .prevalencias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .prevalencia-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-top: 3px solid #27ae60;
+            transition: all 0.2s ease;
+        }
+
+        .prevalencia-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .prevalencia-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+
+        .prevalencia-name {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            padding: 40px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .footer {
+            text-align: center;
+            color: #bdc3c7;
+            margin-top: 40px;
+            padding: 20px 0;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        .section-divider {
+            height: 30px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e8f4f8, #d6eef7);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #3498db;
+            margin: 20px 0;
+            font-size: 0.95rem;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .info-box.warning {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-left: 5px solid #f39c12;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tab-content {
+                padding: 25px 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .tab-button {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+            
+            .stats-summary {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .models-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .costes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .prevalencias-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tab-content {
+                padding: 20px 15px;
+            }
+            
+            .model-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .prevalencias-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PrediDM2</h1>
+            <p class="subtitle">Modelo Predictivo de Coste Total Sanitario en Diabetes Mellitus Tipo 2</p>
+        </div>
+
+        <a href="/" class="back-link">← Inicio</a>
+
+        <!--PESTAÑAS -->
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-button active" onclick="showTab('resumen')">Resumen del Modelo</button>
+                <button class="tab-button" onclick="showTab('predictor')">Predictor Individual</button>
+            </div>
+
+            <div class="tab-content">
+                <!-- PESTAÑA 1: RESUMEN DEL MODELO -->
+                <div id="resumen" class="tab-panel active">
+                    {% if error %}
+                        <div class="error">
+                            <strong>Error:</strong> {{ error }}
+                        </div>
+                    {% elif stats %}
+                        <h2 class="section-title">Resumen de Datos</h2>
+                        
+                        <div class="stats-summary">
+                            <div class="stat-item">
+                                <div class="stat-value">{{ stats.total_pacientes }}</div>
+                                <div class="stat-label">Pacientes con Datos Completos</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value euro">{{ stats.coste_total_promedio|floatformat:0 }}€</div>
+                                <div class="stat-label">Coste Total Promedio</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value euro">{{ stats.coste_total_mediano|floatformat:0 }}€</div>
+                                <div class="stat-label">Coste Total Mediano</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ stats.edad_promedio|floatformat:1 }} años</div>
+                                <div class="stat-label">Edad Promedio</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value euro">{{ stats.coste_total_min|floatformat:0 }}€</div>
+                                <div class="stat-label">Coste Mínimo</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value euro">{{ stats.coste_total_max|floatformat:0 }}€</div>
+                                <div class="stat-label">Coste Máximo</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-box">
+                            <strong>Población analizada:</strong> Pacientes con Diabetes Mellitus Tipo 2 con datos completos de edad, sexo y coste total sanitario. 
+                            El modelo utiliza {{ modelo_usado|default:"múltiples algoritmos" }} para predecir el coste total basándose en características demográficas, 
+                            comorbilidades y complicaciones diabéticas.
+                        </div>
+                        
+                        <div class="info-box warning">
+                            <strong>Nota importante:</strong> El coste total incluye todos los conceptos: CATP (centro/domicilio/telefónico/apoyo), 
+                            CEX (consultas externas), urgencias, ingresos hospitalarios y gasto farmacéutico.
+                        </div>
+
+                        <!-- COMPARACIÓN DE MODELOS -->
+                        <h2 class="section-title modelo">Rendimiento de Modelos Predictivos</h2>
+                        
+                        <div class="models-comparison">
+                            <div class="model-card lineal">
+                                <div class="model-name">Regresión Lineal Multivariante</div>
+                                <div class="model-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-value r2">{{ stats.r2_lineal|floatformat:3 }}</div>
+                                        <div class="metric-label">R² Score</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value mse">{{ stats.mse_lineal|floatformat:0 }}</div>
+                                        <div class="metric-label">MSE</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="model-card forest">
+                                <div class="model-name">Random Forest</div>
+                                <div class="model-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-value r2">{{ stats.r2_rf|floatformat:3 }}</div>
+                                        <div class="metric-label">R² Score</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value mse">{{ stats.mse_rf|floatformat:0 }}</div>
+                                        <div class="metric-label">MSE</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-box">
+                            <strong>Interpretación:</strong> El R² Score indica qué porcentaje de la variabilidad en el coste total puede explicar el modelo. 
+                            El MSE (Error Cuadrático Medio) mide la precisión de las predicciones. Para costes totales, esperamos mayor variabilidad 
+                            que en el gasto farmacéutico debido a la complejidad de factores que influyen en urgencias e ingresos.
+                        </div>
+
+                        <!-- DISTRIBUCIÓN DE COSTES -->
+                        {% if stats.promedios_costes %}
+                        <h2 class="section-title costes">Distribución de Costes por Concepto</h2>
+                        
+                        <div class="costes-grid">
+                            <div class="coste-card">
+                                <div class="coste-concepto">Farmacéutico</div>
+                                <div class="coste-valor">{{ stats.promedios_costes.farmaceutico|floatformat:0 }}€</div>
+                                <div class="coste-porcentaje">{{ stats.porcentajes_costes.farmaceutico|floatformat:1 }}% del total</div>
+                            </div>
+                            <div class="coste-card">
+                                <div class="coste-concepto">Ambulatorio</div>
+                                <div class="coste-valor">{{ stats.promedios_costes.ambulatorio|floatformat:0 }}€</div>
+                                <div class="coste-porcentaje">{{ stats.porcentajes_costes.ambulatorio|floatformat:1 }}% del total</div>
+                            </div>
+                            <div class="coste-card">
+                                <div class="coste-concepto">Hospitalario</div>
+                                <div class="coste-valor">{{ stats.promedios_costes.hospitalario|floatformat:0 }}€</div>
+                                <div class="coste-porcentaje">{{ stats.porcentajes_costes.hospitalario|floatformat:1 }}% del total</div>
+                            </div>
+                            <div class="coste-card">
+                                <div class="coste-concepto">CATP Centro</div>
+                                <div class="coste-valor">{{ stats.promedios_costes.catp_centro|floatformat:0 }}€</div>
+                                <div class="coste-porcentaje">{{ stats.porcentajes_costes.catp_centro|floatformat:1 }}% del total</div>
+                            </div>
+                            <div class="coste-card">
+                                <div class="coste-concepto">CATP Domicilio</div>
+                                <div class="coste-valor">{{ stats.promedios_costes.catp_domicilio|floatformat:0 }}€</div>
+                                <div class="coste-porcentaje">{{ stats.porcentajes_costes.catp_domicilio|floatformat:1 }}% del total</div>
+                            </div>
+                            <div class="coste-card">
+                                <div class="coste-concepto">Urgencias</div>
+                                <div class="coste-valor">{{ stats.promedios_costes.urgencias|floatformat:0 }}€</div>
+                                <div class="coste-porcentaje">{{ stats.porcentajes_costes.urgencias|floatformat:1 }}% del total</div>
+                            </div>
+                            <div class="coste-card">
+                                <div class="coste-concepto">Ingresos</div>
+                                <div class="coste-valor">{{ stats.promedios_costes.ingresos|floatformat:0 }}€</div>
+                                <div class="coste-porcentaje">{{ stats.porcentajes_costes.ingresos|floatformat:1 }}% del total</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-box">
+                            <strong>Análisis económico:</strong> Esta distribución muestra el peso relativo de cada concepto en el coste total por paciente. 
+                            Los costes hospitalarios (urgencias e ingresos) suelen tener alta variabilidad, mientras que los ambulatorios son más predecibles.
+                        </div>
+                        {% endif %}
+
+                        <!-- CARACTERÍSTICAS MÁS IMPORTANTES -->
+                        {% if stats.features_importantes %}
+                        <h2 class="section-title features">Factores Predictivos Más Importantes</h2>
+                        
+                        <div class="features-grid">
+                            {% for feature, importance in stats.features_importantes.items %}
+                            <div class="feature-item">
+                                <span class="feature-name">{{ feature|title }}</span>
+                                <span class="feature-importance">{{ importance|floatformat:3 }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="info-box">
+                            <strong>Análisis de importancia:</strong> Estas características tienen mayor capacidad predictiva para el coste total sanitario. 
+                            Comparado con el gasto farmacéutico, es probable que las complicaciones (especialmente las que requieren hospitalización) 
+                            tengan mayor peso predictivo.
+                        </div>
+                        {% endif %}
+
+                        <div class="section-divider"></div>
+
+                        {% if stats.prevalencias %}
+                        <h2 class="section-title clinico">Perfil Clínico de la Población</h2>
+                        
+                        <div class="prevalencias-grid">
+                            {% for condicion, prevalencia in stats.prevalencias.items %}
+                            <div class="prevalencia-item">
+                                <div class="prevalencia-value">{{ prevalencia|floatformat:1 }}%</div>
+                                <div class="prevalencia-name">{{ condicion|title }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="info-box">
+                            <strong>Contexto clínico:</strong> Estas prevalencias muestran la frecuencia de las principales comorbilidades y complicaciones 
+                            en la población analizada. Para la predicción de coste total, las complicaciones que requieren hospitalización 
+                            (como urgencias cardiacas o complicaciones renales severas) tienen impacto económico desproporcionado.
+                        </div>
+                        {% endif %}
+                        
+                    {% else %}
+                        <div class="no-data">
+                            <p>No se encontraron datos suficientes para generar el modelo predictivo.</p>
+                            <p>Se requieren al menos 50 pacientes con datos completos para el análisis.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- PESTAÑA 2: PREDICTOR INDIVIDUAL -->
+                <div id="predictor" class="tab-panel">
+                    <h2 class="section-title">Predictor de Coste Total Individual</h2>
+                    
+                    <div class="info-box">
+                        <strong>Instrucciones:</strong> Introduce las características del paciente para obtener una estimación del coste total sanitario anual. 
+                        El modelo considera todos los conceptos de gasto: ambulatorio, hospitalario y farmacéutico.
+                    </div>
+
+                    <form id="predictorForm" class="predictor-form">
+                        {% csrf_token %}
+                        <div class="form-grid">
+                            <div class="form-section">
+                                <h3 class="form-section-title">Datos Básicos</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Edad del paciente:</label>
+                                    <input type="number" name="edad" min="18" max="100" value="65" class="form-input" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Sexo:</label>
+                                    <select name="sexo" class="form-input" required>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Femenino</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Años con diabetes:</label>
+                                    <input type="number" name="anyos_con_dm2" min="0" max="50" value="5" class="form-input">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Número de comorbilidades:</label>
+                                    <input type="number" name="num_comorbilidades" min="0" max="20" value="2" class="form-input">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Número de complicaciones:</label>
+                                    <input type="number" name="num_complicaciones" min="0" max="10" value="1" class="form-input">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Nivel de gravedad:</label>
+                                    <select name="nivel_gravedad" class="form-input">
+                                        <option value="0">0 - Sin gravedad</option>
+                                        <option value="1">1 - Gravedad leve</option>
+                                        <option value="2">2 - Gravedad moderada</option>
+                                        <option value="3">3 - Gravedad alta</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h3 class="form-section-title comorbilidades">Comorbilidades y Complicaciones</h3>
+                                
+                                <div class="checkbox-group">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="hta" id="hta" class="checkbox-input">
+                                        <label for="hta" class="checkbox-label">Hipertensión arterial</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="dislipemias" id="dislipemias" class="checkbox-input">
+                                        <label for="dislipemias" class="checkbox-label">Dislipemias</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="obesidad" id="obesidad" class="checkbox-input">
+                                        <label for="obesidad" class="checkbox-label">Obesidad</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="ic" id="ic" class="checkbox-input">
+                                        <label for="ic" class="checkbox-label">Insuficiencia cardíaca</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="erc" id="erc" class="checkbox-input">
+                                        <label for="erc" class="checkbox-label">Enfermedad renal crónica</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="ansiedad" id="ansiedad" class="checkbox-input">
+                                        <label for="ansiedad" class="checkbox-label">Ansiedad</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="depresion" id="depresion" class="checkbox-input">
+                                        <label for="depresion" class="checkbox-label">Depresión</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="nefropatia_diabetica" id="nefropatia_diabetica" class="checkbox-input">
+                                        <label for="nefropatia_diabetica" class="checkbox-label">Nefropatía diabética</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="retinopatia_diabetica" id="retinopatia_diabetica" class="checkbox-input">
+                                        <label for="retinopatia_diabetica" class="checkbox-label">Retinopatía diabética</label>
+                                    </div>
+                                    
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="cardiopatia_isquemica" id="cardiopatia_isquemica" class="checkbox-input">
+                                        <label for="cardiopatia_isquemica" class="checkbox-label">Cardiopatía isquémica</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button type="submit" class="predict-button">Calcular Coste Total</button>
+                        </div>
+                    </form>
+
+                    <div id="resultado" class="result-box">
+                        <div id="resultado-texto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Instituto de Investigación Sanitaria INCLIVA • PrediDM2 • Sistema de Análisis de Diabetes Mellitus Tipo 2</p>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            const panels = document.querySelectorAll('.tab-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            
+            event.target.classList.add('active');
+        }
+
+        document.getElementById('predictorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const resultBox = document.getElementById('resultado');
+            const resultText = document.getElementById('resultado-texto');
+            
+            const nivelGravedad = formData.get('nivel_gravedad');
+            formData.delete('nivel_gravedad'); 
+            
+            resultBox.className = 'result-box';
+            resultBox.style.display = 'block';
+            resultText.textContent = 'Calculando predicción...';
+            
+            fetch('{% url "prediccion_individual_coste_total" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resultBox.className = 'result-box success';
+                    resultText.textContent = data.mensaje;
+                } else {
+                    resultBox.className = 'result-box error';
+                    resultText.textContent = 'Error: ' + data.error;
+                }
+                resultBox.style.display = 'block';
+            })
+            .catch(error => {
+                resultBox.className = 'result-box error';
+                resultText.textContent = 'Error de conexión. Inténtalo de nuevo.';
+                resultBox.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
